@@ -33,6 +33,7 @@ import io.github.benas.todolist.web.common.form.ChangePasswordForm;
 import io.github.benas.todolist.web.common.form.RegistrationForm;
 import io.github.benas.todolist.web.common.util.TodoListUtils;
 import io.github.todolist.core.domain.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.validation.ConstraintViolation;
 import java.text.MessageFormat;
@@ -247,11 +248,11 @@ public class AccountAction extends BaseAction {
     }
 
     private boolean newPasswordDoesNotMatchConfirmationPassword() {
-        return !changePasswordForm.getNewPassword().equals(changePasswordForm.getConfirmationPassword());
+        return !BCrypt.checkpw(changePasswordForm.getNewPassword(), changePasswordForm.getConfirmationPassword());
     }
 
     private boolean incorrectCurrentPassword(User user) {
-        return !changePasswordForm.getCurrentPassword().equals(user.getPassword());
+        return !BCrypt.checkpw(changePasswordForm.getCurrentPassword(), user.getPassword());
     }
 
     private void validateChangePasswordForm() {

@@ -20,10 +20,24 @@ spec:
       - image: ${DOCKER_ACCOUNT}/java-goof:latest
         imagePullPolicy: Always
         name: java-goof
+        livenessProbe:
+          exec:
+            command:
+              - /usr/bin/check-status
+              - -l
+        resources:
+          limits:
+            memory: 2Gb
+            cpu: 2
         securityContext:
           runAsNonRoot: true
+          readOnlyRootFilesystem: true
           runAsUser: 65534 #nobody
           runAsGroup: 65534 #nobody
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
       restartPolicy: Always
 ---
 apiVersion: v1
@@ -34,6 +48,8 @@ metadata:
   name: goof
 spec:
   type: LoadBalancer
+  loadBalancerSourceRanges:
+    - 0.0.0.0/0
   ports:
     - port: 80
       protocol: TCP
