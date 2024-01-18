@@ -25,6 +25,28 @@ spec:
         - name: ldap
           image: ${DOCKER_ACCOUNT}/log4shell-server:latest
           imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 2
+              memory: 2Gb
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 10001
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              httpHeaders:
+                - name: Custom-Header
+                  value: Awesome
+              initialDelaySeconds: 3
+              periodSeconds: 3
+
 ---
 apiVersion: v1
 kind: Service
